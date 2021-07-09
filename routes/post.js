@@ -19,9 +19,11 @@ const salt = 10
 
 // Route for login to have a new token
 router.post('/auth', async (req, res) => {
+
     const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).send('User does not exists!');
-    if (await bcrypt.compare(req.body.password, user.password) && user.email === req.body.email) {
+    if (await bcrypt.compare(req.body.password, user.password) &&
+     user.email === req.body.email) {
 
         const payload = {
             admin: user.admin,
@@ -36,8 +38,9 @@ router.post('/auth', async (req, res) => {
         const secret = process.env.SECRET
         let token = jwt.sign(payload, secret, options)
         res.cookie("auth", token)
-        res.send(req.cookies["auth"])
 
+        // res.send(req.cookies["auth"])
+        res.json(token)
  
     } else {
         res.status(401).send('Invalid request')
@@ -108,7 +111,7 @@ router.delete('/:id', async (req, res) => {
         }
     }
     else {
-        res.send('please log in!')
+        res.send('Please log in!')
     }
 
 })
@@ -127,7 +130,6 @@ router.put('/:id', async (req, res) => {
             for (property in req.body) {
                 updateObject[property] = req.body[property]
             }
-
             // Using FindByID and update method
             const result = await User.updateOne({
                 _id: req.params.id
