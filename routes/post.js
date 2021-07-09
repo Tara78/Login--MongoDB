@@ -1,16 +1,21 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
+
 //Imports
 const User = require('../model/user')
 const jwt = require('jsonwebtoken')
+
+// cookie parser
 const cookieParser = require('cookie-parser')
+
+// Required to use req.cookies as middleware
 router.use(cookieParser())
 
 const bcrypt = require('bcrypt')
 const salt = 10
 
 
-
+// 
 router.post('/auth', async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).send('User does not exists!');
@@ -31,8 +36,10 @@ router.post('/auth', async (req, res) => {
         let token = jwt.sign(payload, secret, options)
         res.cookie("auth", token)
         res.send(req.cookies["auth"])
+
+        // If no cookie with the name of 'auth' can found
     } else {
-        res.send('Invalid request')
+        res.status(401).send('Invalid request')
     }
 
 })
@@ -66,6 +73,7 @@ router.post('/register', async (req, res) => {
 
 
 // Get back all users
+//Find Users, use empty object to find everything and save
 router.get('/', async (req, res) => {
     const Users = await User.find({})
     res.json(Users)
@@ -80,11 +88,15 @@ router.get('/:id', async (req, res) => {
 })
 
 
-// Delet an user
+// Delet an user, Only Admin can do based on the role saved on cookies.
 router.delete('/:id', async (req, res) => {
     const decode = jwt.verify(req.cookies['auth'], process.env.SECRET);
+
+      // If admin, find user by id and delete it
     if (decode.exp) {
         const result = await User.deleteOne({ _id: req.params.id })
+
+         // Check if user is an admin (role)
         if (decode.admin === true) {
 
             res.send(result)
@@ -101,6 +113,7 @@ router.delete('/:id', async (req, res) => {
 
 
 // Update a User
+// Put for uppdating , admin can access only.
 router.put('/:id', async (req, res) => {
 
     const decode = jwt.verify(req.cookies['auth'], process.env.SECRET);
