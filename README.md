@@ -16,5 +16,3 @@ När en användare registreras ska lösenordet först krypteras med bcrypt innan
 När någon försöker logga in ska en autentisering genomföras (undersök om det är rätt kombination av 
 användarnamn och lösenord). Om användaren blir autentiserad ska en token skickas tillbaka. 
 I denna ska det finnas information om användaren är admin eller inte.
-
-
