@@ -31,6 +31,12 @@ mongoose.connect (
 
 // Rotes Middleware
 app.use('/api/user', postRoute);
+app.use((error, req, res) => {
+  res.send(error)
+}
+)
+
+
 
 
 app.listen(port, (req, res) =>{

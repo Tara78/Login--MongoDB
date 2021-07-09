@@ -13,7 +13,7 @@ router.use(cookieParser())
 
 const bcrypt = require('bcrypt')
 // Give value 10 to saltRounds 
-// Controls how much time is needed to calculate a single BCrypt hash
+// Controls how long is needed to calculate a single BCrypt hash
 const salt = 10
 
 
@@ -63,6 +63,7 @@ router.post('/register', async (req, res) => {
     const user = new User({
         name: req.body.name,
         email: req.body.email,
+        admin: req.body.admin,
         password: hashPassword,
 
     });
@@ -122,6 +123,7 @@ router.delete('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
 
     const decode = jwt.verify(req.cookies['auth'], process.env.SECRET);
+    console.log(decode)
     if (decode.exp) {
 
         if (decode.admin === true) {

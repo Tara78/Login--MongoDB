@@ -7,9 +7,13 @@ när du har token du kan använda appen
 
 Resurser/routes
 /users GET Visa alla användare
+
 /users/:id GET Visa info om en användare
+
 /users POST Registrera en användare
+
 /users/:id DELETE Ta bort en användare
+
 /users/:id PUT Uppdatera en användare
 
 User-modell ha egenskapen admin som kan ha värdet true eller false.
