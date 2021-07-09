@@ -2,6 +2,8 @@ Det är en applikation där användare kan logga in.
 Användade node-paketen express, mongoose, bcrypt och jsonwebtoken
 
 Man måste skriva "npm i" , och snedan "npm start" i terminalen.
+Först login (in postman, post option and localhost:5000/api/user/auth)
+när du har token du kan använda appen 
 
 Resurser/routes
 /users GET Visa alla användare

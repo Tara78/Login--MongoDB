@@ -8,10 +8,11 @@ const jwt = require('jsonwebtoken')
 // cookie parser
 const cookieParser = require('cookie-parser')
 
-// Required to use req.cookies as middleware
+// Required to use req.cookies 
 router.use(cookieParser())
 
 const bcrypt = require('bcrypt')
+// Controls how much time is needed to calculate a single BCrypt hash
 const salt = 10
 
 
@@ -51,7 +52,7 @@ router.post('/register', async (req, res) => {
     //  Check if USER is already exist in our database
     const emailExist = await User.findOne({ email: req.body.email });
     if (emailExist) return res.status(400).send('This Email is alreday exists!');
-
+    // Adding sal-variable and returns an encrypted password: 'hash'
     const hashPassword = await bcrypt.hash(req.body.password, salt)
 
 
@@ -59,7 +60,8 @@ router.post('/register', async (req, res) => {
     const user = new User({
         name: req.body.name,
         email: req.body.email,
-        password: hashPassword
+        password: hashPassword,
+
     });
     try {
         const savedUser = await user.save()
@@ -73,7 +75,7 @@ router.post('/register', async (req, res) => {
 
 
 // Get back all users
-//Find Users, use empty object to find everything and save
+//Find Users, use empty object to find a user and save
 router.get('/', async (req, res) => {
     const Users = await User.find({})
     res.json(Users)
