@@ -8,15 +8,16 @@ const jwt = require('jsonwebtoken')
 // cookie parser
 const cookieParser = require('cookie-parser')
 
-// Required to use req.cookies 
+// Required to use req.cookies as middleware
 router.use(cookieParser())
 
 const bcrypt = require('bcrypt')
+// Give value 10 to saltRounds 
 // Controls how much time is needed to calculate a single BCrypt hash
 const salt = 10
 
 
-// 
+// Route for login to have a new token
 router.post('/auth', async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).send('User does not exists!');
@@ -33,12 +34,11 @@ router.post('/auth', async (req, res) => {
         }
 
         const secret = process.env.SECRET
-
         let token = jwt.sign(payload, secret, options)
         res.cookie("auth", token)
         res.send(req.cookies["auth"])
 
-        // If no cookie with the name of 'auth' can found
+ 
     } else {
         res.status(401).send('Invalid request')
     }
@@ -52,11 +52,11 @@ router.post('/register', async (req, res) => {
     //  Check if USER is already exist in our database
     const emailExist = await User.findOne({ email: req.body.email });
     if (emailExist) return res.status(400).send('This Email is alreday exists!');
-    // Adding sal-variable and returns an encrypted password: 'hash'
+    // Adding salt-variable and returns an encrypted password: 'hash'
     const hashPassword = await bcrypt.hash(req.body.password, salt)
 
 
-    // Creat a User
+    // Creat a New User
     const user = new User({
         name: req.body.name,
         email: req.body.email,
@@ -94,7 +94,7 @@ router.get('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const decode = jwt.verify(req.cookies['auth'], process.env.SECRET);
 
-      // If admin, find user by id and delete it
+      // If admin, find user by :id and delete it
     if (decode.exp) {
         const result = await User.deleteOne({ _id: req.params.id })
 
@@ -115,7 +115,7 @@ router.delete('/:id', async (req, res) => {
 
 
 // Update a User
-// Put for uppdating , admin can access only.
+// Put for uppdating, admin can access only.
 router.put('/:id', async (req, res) => {
 
     const decode = jwt.verify(req.cookies['auth'], process.env.SECRET);
@@ -128,7 +128,7 @@ router.put('/:id', async (req, res) => {
                 updateObject[property] = req.body[property]
             }
 
-            // Using Find ByID and update method
+            // Using FindByID and update method
             const result = await User.updateOne({
                 _id: req.params.id
             },
